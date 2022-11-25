@@ -14,14 +14,13 @@ body {
 .welcome{
     padding: 200px 0;
 }
-.welcome .gradient-bg{
-    border-radius: 10px;
-}
+
 
 .gradient-bg {
     background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(15px);
+    border-radius: 8px;
 }
 
 .habit-container {
