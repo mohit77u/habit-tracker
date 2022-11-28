@@ -1,10 +1,10 @@
-//---------User model----------//
 const User = require('../models/User');
 const Habit = require('../models/Habit');
+var buffer = require('buffer/').Buffer;
 
 var email = "";
 
-//------------------Function to return date string--------------//
+// Function to return date string 
 function getD(n) {
     let d = new Date();
     d.setDate(d.getDate() + n);
@@ -32,12 +32,13 @@ function getD(n) {
 
 // dashboard page
 module.exports.dashboard = async(req,res) => {
-    email = req.query.user;
+    var userEmail = buffer.from(req.query.user, 'base64').toString('ascii')
+    email = userEmail
     User.findOne({
-        email: req.query.user
+        email: userEmail
     }).then(user => {
         Habit.find({
-            email: req.query.user
+            email: userEmail
         }, (err, habits) => {
             if (err) console.log(err);
             else {
@@ -80,7 +81,7 @@ module.exports.dashboardPost  = async(req,res) => {
 
     Habit.findOne({ content: content, email: email }).then(habit => {
         if (habit) {
-            //---------Update existing habit----------//
+            // Update existing habit 
             let dates = habit.dates, tzoffset = (new Date()).getTimezoneOffset() * 60000;
             var today = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
             dates.find(function (item, index) {
@@ -114,7 +115,7 @@ module.exports.dashboardPost  = async(req,res) => {
                 dates
             });
 
-            //---------Save Habit----------//
+            // Save Habit 
             newHabit
                 .save()
                 .then(habit => {

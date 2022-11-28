@@ -1,5 +1,6 @@
 //User model
 const User = require('../models/User')
+var buffer = require('buffer/').Buffer;
 
 // register route
 module.exports.create = async(req,res) => {
@@ -69,7 +70,9 @@ module.exports.login = async(req,res) => {
         }
         //Redirect to dashboard
         else {
-            res.redirect(`/dashboard?user=${user.email}`);
+            // console.log(buffer.from(user.email).toString('base64'));
+            const userEmail = buffer.from(user.email).toString('base64')
+            res.redirect(`/dashboard?user=${userEmail}`);
         }
     });
 }

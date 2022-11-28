@@ -4,7 +4,6 @@ dotenv.config();
 
 //- Importing Modules -//
 const express = require('express');
-const expressLayouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const customMiddleware = require('./config/middleware');
@@ -12,18 +11,38 @@ const session = require('express-session');
 
 const app = express();
 
-//-Connect to Mongo
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log("Connected to MongoDB successfully!"))
-    .catch(err => console.log(err));
+// get db from mongoose
+const db = require('./config/mongoose');
 
-//EJS //
-app.use(expressLayouts);
-app.use("/assets", express.static('./assets'));
-app.set('view engine', 'ejs');
+// connecting SASS
+const sassMiddleware = require('node-sass-middleware');
 
-//-BodyParser
+// use sass middleware
+app.use(sassMiddleware({
+    src: './resources/css',
+    dest: './assets/css',
+    debug: true,
+    outputStyle: 'compressed',
+    // where should my server look out for css file
+    prefix: '/css'
+}));
+
+// BodyParser
 app.use(express.urlencoded({ extended: false }));
+
+// static assets
+app.use(express.static('./assets'));
+
+// layouts section
+const expressLayouts = require('express-ejs-layouts');
+app.use(expressLayouts);
+app.set('layout', './layout')
+// extract style and scripts from sub pages into the layout
+app.set('layout extractStyles',true);
+app.set('layout extractScripts',true);
+
+// Set the template engine ejs
+app.set('view engine','ejs');
 
 // Express Session//
 app.use(
